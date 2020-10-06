@@ -1,0 +1,22 @@
+void DebugSelf()
+{
+    HANDLE hProcess = NULL;
+    DEBUG_EVENT de;
+    PROCESS_INFORMATION pi;
+    STARTUPINFO si;
+    ZeroMemory(&pi, sizeof(PROCESS_INFORMATION));
+    ZeroMemory(&si, sizeof(STARTUPINFO));
+    ZeroMemory(&de, sizeof(DEBUG_EVENT));
+
+    GetStartupInfo(&si);
+
+    // Create the copy of ourself
+    CreateProcess(NULL, GetCommandLine(), NULL, NULL, FALSE,
+        DEBUG_PROCESS, NULL, NULL, &si, &pi);
+
+    // Continue execution
+    ContinueDebugEvent(pi.dwProcessId, pi.dwThreadId, DBG_CONTINUE);
+
+    // Wait for an event
+    WaitForDebugEvent(&de, INFINITE);
+}
